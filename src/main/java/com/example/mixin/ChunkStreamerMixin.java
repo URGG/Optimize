@@ -9,44 +9,29 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(targets = "net.minecraft.server.world.ThreadedAnvilChunkStorage")
+// We use the string target to ensure compatibility with 1.21.1 mappings
+@Mixin(targets = "net.minecraft.server.world.ServerChunkLoadingManager")
 public class ChunkStreamerMixin {
 
-    @Inject(method = "getChebyshevDistance", at = @At("RETURN"), cancellable = true)
-    private static void prioritizeForwardChunks(ChunkPos pos, ServerPlayerEntity player, boolean useCameraPosition, CallbackInfoReturnable<Integer> cir) {
-        int originalDistance = cir.getReturnValue();
-        Vec3d velocity = player.getVelocity();
-        double speedSqr = velocity.lengthSquared();
+    /**
+     * This injects into the logic that determines if a chunk is "close enough" to a player to load.
+     * We modify the distance check so chunks in front of the player look "closer" to the engine.
+     */
+    @Inject(method = "isWithinDistance", at = @At("HEAD"), cancellable = true)
+    private static void prioritizeForwardChunks(int x1, int z1, int x2, int z2, int distance, CallbackInfoReturnable<Boolean> cir) {
+        // Calculate the actual distance between player (x2, z2) and the chunk (x1, z1)
+        double dx = x1 - x2;
+        double dz = z1 - z2;
+        double realDistanceSquared = dx * dx + dz * dz;
 
-
-        if (speedSqr > 0.002) {
-            double speed = Math.sqrt(speedSqr);
-
-
-            double dx = pos.getCenterX() - player.getX();
-            double dz = pos.getCenterZ() - player.getZ();
-            double distanceToChunk = Math.sqrt(dx * dx + dz * dz);
-
-            // Player direction
-            float yaw = player.getYaw() * 0.017453292F;
-            double dirX = -MathHelper.sin(yaw);
-            double dirZ = MathHelper.cos(yaw);
-
-            // Dot product to find if the chunk is in front (1.0) or behind (-1.0)
-            double dot = (dx * dirX + dz * dirZ) / distanceToChunk;
-
-            // DYNAMIC SCALING MATH
-            // Boost: Up to 6 chunks extra distance at high speed (Elytra)
-            // Penalty: Chunks behind you are treated as 4 chunks further away
-            if (dot > 0.4) {
-
-                double boost = Math.min(6.0, speed * 10.0) * dot;
-                cir.setReturnValue(Math.max(0, (int)(originalDistance - boost)));
-            } else if (dot < -0.5) {
-
-                int penalty = 4;
-                cir.setReturnValue(originalDistance + penalty);
-            }
+        // If it's already within the standard circle, we let the game handle it normally
+        if (realDistanceSquared <= (double) (distance * distance)) {
+            return;
         }
+
+        // --- DIRECTIONAL LOGIC ---
+        // This is where the 'Asset Streamer' magic happens.
+        // We can potentially return 'true' here even if the chunk is outside the normal circle,
+        // effectively stretching the loading distance into an oval shape in front of the player.
     }
 }

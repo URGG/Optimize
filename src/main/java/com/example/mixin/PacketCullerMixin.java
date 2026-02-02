@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 
-@Mixin(targets = "net.minecraft.server.world.ThreadedAnvilChunkStorage")
+@Mixin(targets = "net.minecraft.server.world.ChunkLoadingManager")
 public class PacketCullerMixin {
 
     @Inject(method = "canSkipChunk", at = @At("head"),cancellable = true)

@@ -17,11 +17,15 @@
 	"entrypoints": {
 		"main": [
 			"com.example.ExampleMod"
+		],
+		"client": [
+			"com.example.ExampleModClient"
 		]
 	},
 	"mixins": [
-		"modid.mixins.json",{
-			"config": "modid.mixins.json",
+		"modid.main.mixins.json",
+		{
+			"config": "modid.client.mixins.json",
 			"environment": "client"
 		}
 	],

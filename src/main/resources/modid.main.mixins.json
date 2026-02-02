@@ -5,8 +5,8 @@
 	"mixins": [
 
 		"ChunkStreamerMixin",
-		"PacketCullerMixin",
-		"client.InGameHudMixin"
+		"PacketCullerMixin"
+
 	],
 	"injectors": {
 		"defaultRequire": 1
