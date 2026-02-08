@@ -5,7 +5,7 @@
 	"name": "Asset Streamer",
 	"description": "Optimizes chunk loading based on player movement direction.",
 	"authors": [
-		"You"
+		"Urg_"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
@@ -23,11 +23,7 @@
 		]
 	},
 	"mixins": [
-		"modid.main.mixins.json",
-		{
-			"config": "modid.client.mixins.json",
-			"environment": "client"
-		}
+		"modid.main.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.18.2",
