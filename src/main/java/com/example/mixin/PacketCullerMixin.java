@@ -11,5 +11,7 @@ public class PacketCullerMixin {
     @Inject(method = "tick", at = @At("TAIL"))
     private void onTickEnd(CallbackInfo ci) {
 
+        C
+
     }
 }

@@ -4,26 +4,38 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.text.Text;
 
 public class StreamerHudRenderer implements HudRenderCallback {
 
     @Override
     public void onHudRender(DrawContext drawContext, RenderTickCounter tickCounter) {
         MinecraftClient client = MinecraftClient.getInstance();
-        if (client.player == null || client.options.hudHidden) return;
+        if (client.player == null) return;
 
-        // Position
-        int x = 20;
-        int y = 20;
+        // 1. GET ACTUAL GAME DATA
+        // Calculate horizontal speed: Square root of (velocity X² + velocity Z²) * 20 ticks
+        double xVel = client.player.getVelocity().x;
+        double zVel = client.player.getVelocity().z;
+        double speed = Math.sqrt(xVel * xVel + zVel * zVel) * 20;
 
+        // Get the player's current Chunk coordinates
+        int chunkX = client.player.getChunkPos().x;
+        int chunkZ = client.player.getChunkPos().z;
 
-        drawContext.fill(x - 5, y - 5, x + 100, y + 30, 0xAA000000); // Semi-transparent black
-        drawContext.fill(x - 5, y - 5, x - 3, y + 30, 0xFF55FF55);   // Green bar
+        // 2. FORMAT THE DATA INTO STRINGS
+        String speedDisplay = String.format("Speed: %.2f bps", speed);
+        String chunkDisplay = "Chunk: " + chunkX + ", " + chunkZ;
 
-        // 2. FORCE TEXT TO THE FRONT
-        // We use drawTextWithShadow because it bypasses some transparency bugs
-        // Color 0xFFFFFF is pure white.
-        drawContext.drawTextWithShadow(client.textRenderer, "DEBUG: MOD ACTIVE", x, y, 0xFFFFFF);
-        drawContext.drawTextWithShadow(client.textRenderer, "COORDS: " + client.player.getBlockPos().toShortString(), x, y + 12, 0x55FF55);
+        // 3. RENDER THE BOX
+        int x = 10;
+        int y = 10;
+        drawContext.fill(x - 2, y - 2, x + 120, y + 38, 0x80000000); // Background
+
+        // 4. RENDER THE ACTUAL DATA
+        // We MUST use Text.literal() or the game will show nothing!
+        drawContext.drawText(client.textRenderer, Text.literal("§bASSET STREAMER"), x, y, 0xFFFFFF, true);
+        drawContext.drawText(client.textRenderer, Text.literal(speedDisplay), x, y + 12, 0xFFFFFF, true);
+        drawContext.drawText(client.textRenderer, Text.literal(chunkDisplay), x, y + 24, 0xFFFFFF, true);
     }
 }
