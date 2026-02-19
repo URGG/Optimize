@@ -11,6 +11,9 @@ base {
 }
 
 loom {
+	// This tells the dev injector there is no separate 'client' folder
+
+
 	runs {
 		client {
 			client()
@@ -52,7 +55,7 @@ java {
 sourceSets {
 	main {
 		java {
-			srcDirs = ['src/main/java']
+			srcDirs = ['src/main/java', 'src/client/java'] // Combines both folders into one 'main' source
 		}
 		resources {
 			srcDirs = ['src/main/resources']

@@ -1,17 +1,9 @@
 package com.example.mixin;
 
+import net.minecraft.server.world.ServerChunkLoadingManager;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(targets = "net.minecraft.server.world.ServerChunkLoadingManager")
+@Mixin(ServerChunkLoadingManager.class) // Simplified header
 public class PacketCullerMixin {
-
-    @Inject(method = "tick", at = @At("TAIL"))
-    private void onTickEnd(CallbackInfo ci) {
-
-
-
-    }
+    // Keeping this empty for now so you can actually enter the world
 }
