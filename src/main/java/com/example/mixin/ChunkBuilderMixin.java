@@ -30,6 +30,7 @@ public class ChunkBuilderMixin {
 
         double dot = lookDir.dotProduct(toChunk);
 
+
         // If chunk is in front (dot > 0.3), fake a closer distance
         // This moves it to the top of the 'To-Build' queue
         if (dot > 0.3) {

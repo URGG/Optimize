@@ -1,7 +1,7 @@
 package com.example.mixin;
 
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ThreadedAnvilChunkStorage;
+import net.minecraft.server.world.ServerChunkLoadingManager;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(ThreadedAnvilChunkStorage.class)
+@Mixin(ServerChunkLoadingManager.class)
 public class ChunkStreamerMixin {
 
     @Inject(method = "getSquaredDistanceToPoint", at = @At("RETURN"), cancellable = true)

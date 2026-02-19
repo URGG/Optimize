@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.7.4'
+	id 'fabric-loom' version '1.9-SNAPSHOT' // Updated to support newer Gradle versions
 	id 'maven-publish'
 }
 
@@ -11,9 +11,6 @@ base {
 }
 
 loom {
-	// This is the critical fix to avoid needing a 'src/client' folder
-	splitEnvironmentSourceSets = false
-
 	runs {
 		client {
 			client()
